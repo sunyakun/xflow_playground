@@ -1,6 +1,6 @@
 import {
   DatabaseOutlined,
-  RedoOutlined,
+  SyncOutlined,
   CloseCircleOutlined,
   CheckCircleOutlined,
   ExclamationCircleOutlined,
@@ -17,7 +17,7 @@ export const NodeIcon = props => {
   }
   switch (props.status) {
     case NsGraphStatusCommand.StatusEnum.PROCESSING:
-      return <RedoOutlined spin style={{ color: '#c1cdf7', fontSize: '16px' }} />
+      return <SyncOutlined spin style={{ color: '#c1cdf7', fontSize: '16px' }} />
     case NsGraphStatusCommand.StatusEnum.ERROR:
       return <CloseCircleOutlined style={{ color: '#ff4d4f', fontSize: '16px' }} />
     case NsGraphStatusCommand.StatusEnum.SUCCESS:

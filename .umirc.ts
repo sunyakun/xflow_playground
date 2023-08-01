@@ -5,5 +5,9 @@ export default defineConfig({
     { path: "/", component: "index" },
     { path: "/xflow", component: "xflow" },
   ],
-  npmClient: 'pnpm'
+  npmClient: 'pnpm',
+  favicons: [
+    '/favicons.svg'
+  ],
+  svgr: {},
 });

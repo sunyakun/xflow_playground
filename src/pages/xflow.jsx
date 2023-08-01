@@ -1,7 +1,10 @@
 import {
     XFlow, XFlowCanvas, CanvasScaleToolbar, createGraphConfig, XFlowGraphCommands,
-    XFlowNodeCommands, CanvasMiniMap, JsonSchemaForm, NsJsonSchemaForm
+    XFlowNodeCommands, CanvasMiniMap, JsonSchemaForm, NsJsonSchemaForm,
+    NsGraphStatusCommand,
+    NsGraph
 } from '@antv/xflow'
+import { Row, Col } from "antd"
 import { Node } from './node'
 import "./xflow.less"
 import { useRef } from 'react'
@@ -16,7 +19,7 @@ async function formSchemaService(args) {
         ]
     }
 
-    if (!args) {
+    if (!args || args.targetType != 'node') {
         return emptyForm
     }
 
@@ -63,6 +66,15 @@ export default function CustomXFlow() {
               renderKey: 'Node',
               width: 150,
               height: 40,
+              status: NsGraphStatusCommand.StatusEnum.PROCESSING,
+              ports: [
+                    {
+                        id: 'root-input-port1',
+                        type: NsGraph.AnchorType.INPUT,
+                        group: NsGraph.AnchorGroup.TOP,
+                        tooltip: 'INPUT'
+                    }
+                ]
             },
         })
         await app.executeCommand(XFlowNodeCommands.ADD_NODE.id, {
@@ -74,23 +86,21 @@ export default function CustomXFlow() {
                 renderKey: 'Node',
                 width: 150,
                 height: 40,
+                status: NsGraphStatusCommand.StatusEnum.DEFAULT,
+                ports: [
+                    {
+                        id: 'down-output-port1',
+                        type: NsGraph.AnchorType.OUTPUT,
+                        group: NsGraph.AnchorGroup.BOTTOM,
+                        tooltip: 'OUTPUT'
+                    },
+                ]
             },
         })
         await app.executeCommand(XFlowGraphCommands.GRAPH_ZOOM.id, {
             factor: 'real',
         })
         await app.executeCommand(XFlowNodeCommands.CENTER_NODE.id, {nodeConfig: {id: 'root'}})
-        // await app.executeCommand(XFlowGraphCommands.GRAPH_RENDER.id, {
-        //     graphData: {
-        //         nodes: [
-        //             { id: 'root1', x:100, y: 100, width: 150, height: 40, renderKey: 'Node', label: 'Node' },
-        //             { id: 'down1', x:100, y: 200, width: 150, height: 40, renderKey: 'Node', label: 'Node' },
-        //             { id: 'down2', x:100, y: 300, width: 150, height: 40, renderKey: 'Node', label: 'Node' },
-        //             { id: 'down3', x:100, y: 400, width: 150, height: 40, renderKey: 'Node', label: 'Node' },
-        //         ],
-        //         edges: []
-        //     }
-        // })
     }
 
     const useGraphConfig = createGraphConfig(config => {
@@ -115,14 +125,20 @@ export default function CustomXFlow() {
     })
 
     return (
-        <XFlow onLoad={ onLoad } className='xflow-workspace'>
-            <XFlowCanvas config={ useGraphConfig() }>
-                {/* <CanvasMiniMap />
-                <CanvasScaleToolbar position={{ top: 0, left: 0}}/> */}
-                {/* <JsonSchemaForm className='xflow-jsonschema-form'
-                    formSchemaService={ formSchemaService }
-                /> */}
-            </XFlowCanvas>
-        </XFlow>
+        <Row>
+            <Col span={24}>
+                <XFlow onLoad={ onLoad } className='xflow-workspace'>
+                    <XFlowCanvas config={ useGraphConfig() }>
+                        <CanvasMiniMap position={{ top: 20, left: 20 }}/>
+                        <CanvasScaleToolbar position={{ top: 10, right: 360}}/>
+                        <JsonSchemaForm className='xflow-jsonschema-form'
+                            style={{ backgroundColor: 'white' }}
+                            formSchemaService={ formSchemaService }
+                            position={{ top: 0, right: 0, width: 350, height: 512}}
+                        />
+                    </XFlowCanvas>
+                </XFlow>
+            </Col>
+        </Row>
     );
 }
